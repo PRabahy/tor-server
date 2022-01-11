@@ -1,0 +1,36 @@
+name: Build on master push
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  DOCKER_CLI_EXPERIMENTAL: enabled
+
+jobs:
+  build:
+    name: Build and push Docker image
+    runs-on: ubuntu-18.04
+    env:
+      TOR_VERSION: 0.4.6.8@sha256:c262923ffd0bd224a4a4123cf1c88eea11e2314566b7b7e8a1f77969deeb0208
+    steps:
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Checkout project
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Setup Docker buildx action
+        uses: docker/setup-buildx-action@v1
+
+      - name: Run Docker buildx
+        run: |
+          docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --build-arg TOR_VERSION=$TOR_VERSION \
+          --tag ${{ secrets.DOCKER_HUB_USER }}/tor-server:$VERSION \
+          --push .
