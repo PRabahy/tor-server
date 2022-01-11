@@ -13,7 +13,8 @@ jobs:
     name: Build and push Docker image
     runs-on: ubuntu-18.04
     env:
-      TOR_VERSION: 0.4.6.8@sha256:c262923ffd0bd224a4a4123cf1c88eea11e2314566b7b7e8a1f77969deeb0208
+      TOR_VERSION: 0.4.6.8
+      TOR_CHECKSUM: @sha256:c262923ffd0bd224a4a4123cf1c88eea11e2314566b7b7e8a1f77969deeb0208
     steps:
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -32,5 +33,6 @@ jobs:
           docker buildx build \
           --platform linux/amd64,linux/arm64 \
           --build-arg TOR_VERSION=$TOR_VERSION \
+          --build-arg TOR_CHECKSUM=$TOR_CHECKSUM \
           --tag ${{ secrets.DOCKER_HUB_USER }}/tor-server:$TOR_VERSION \
           --push .
