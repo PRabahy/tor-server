@@ -1,4 +1,6 @@
-FROM lncm/tor:0.4.6.8
+ARG TOR_VERSION=0.4.6.8@sha256:c262923ffd0bd224a4a4123cf1c88eea11e2314566b7b7e8a1f77969deeb0208
+
+FROM lncm/tor:$TOR_VERSION
 
 # Install s6
 USER root
