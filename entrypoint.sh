@@ -58,16 +58,16 @@ function main() {
     process_index="-1"
     grep -v '^#\|^[[:space:]]*$' "${torrc_file}" | while read -r line
     do
-    if [[ "$line" = HiddenServiceDir* ]]
-    then
-        hs_index=$((hs_index + 1))
-        if [[ "$((hs_index % hs_per_process))" = "0" ]]
+        if [[ "$line" = HiddenServiceDir* ]]
         then
-            process_index=$((process_index + 1))
-            create_tor_service $process_index
+            hs_index=$((hs_index + 1))
+            if [[ "$((hs_index % hs_per_process))" = "0" ]]
+            then
+                process_index=$((process_index + 1))
+                create_tor_service $process_index
+            fi
         fi
-    fi
-    echo $line >> "/torrc-${process_index}"
+        echo $line >> "/torrc-${process_index}"
     done
 
     exec /init
